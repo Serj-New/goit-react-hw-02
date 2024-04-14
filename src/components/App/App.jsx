@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import css from './App.module.css';
 
@@ -17,17 +17,16 @@ export default function App() {
         bad: 0
     }});
 
-    const updateFeedback = feedbackType => {
-        setValues(prevValues => {
-            const newValues = {
-            ...prevValues,
-            [feedbackType]: prevValues[feedbackType] + 1
-            };
+    useEffect(() => {
+        localStorage.setItem("feedbackValues", JSON.stringify(values));
+    }, [values]);
 
-            localStorage.setItem("feedbackValues", JSON.stringify(newValues));
-            return newValues
+    const updateFeedback = feedbackType => {
+        setValues({
+            ...values,
+            [feedbackType]: values[feedbackType] + 1
         });
-    };
+    }
 
     const totalFeedback = values.good + values.neutral + values.bad;
 
@@ -41,7 +40,7 @@ export default function App() {
         localStorage.setItem("feedbackValues", JSON.stringify(initialValues));
     };
 
-    const positiveFeedback = Math.round((values.good / totalFeedback) * 100);
+    const positiveFeedback = totalFeedback > 0 ? Math.round((values.good / totalFeedback) * 100) : 0;
 
   return (
     <div>
